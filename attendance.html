@@ -22,7 +22,7 @@
 
 
 
-							);border:2px solid #60a5fa;display:flex;align-items:center;justify-content:center;font-size:32px">⏰</div><div style="font-size:14px;font-weight:700;color:#fff">ប្រព័ន្ធគ្រប់គ្រងវត្តមានបុគ្គលិកអប់រំ</div><div style="font-size:11px;color:#94a3b8;margin-top:4px">សាលាបឋមសិក្សា រោគ</div></div><div class="card p-6"><div style="font-size:13px;font-weight:700;margin-bottom:14px;color:#fff">🔐 ចូលប្រព័ន្ធតាមរយៈលេខទូរសព្ទ (SMS OTP)</div><div id="phone-auth-section" style="margin-bottom:14px"><div style="font-size:11px;color:#94a3b8;margin-bottom:4px">📱 លេខទូរសព្ទ (ឧទាហរណ៍៖ +85512345678)</div><div class="flex gap-2"><input id="auth-phone-number" type="tel" value="+855" placeholder="+85512345678" style="flex:1;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:8px 14px;font-size:13px;color:#fff;outline:0"><button id="send-otp-btn" style="background:#1d4ed8;color:#fff;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">ផ្ញើ OTP</button></div></div><div id="otp-auth-section" class="hidden" style="margin-bottom:14px"><div style="font-size:11px;color:#94a3b8;margin-bottom:4px">🔑 លេខកូដ OTP ៦ខ្ទង់</div><input id="auth-otp-code" type="text" placeholder="បញ្ចូលលេខកូដពី SMS" style="width:100%;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:8px 14px;font-size:13px;color:#fff;outline:0;margin-bottom:10px"><button id="verify-otp-btn" style="width:100%;background:#16a34a;color:#fff;padding:10px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">ផ្ទៀងផ្ទាត់ ន ិងចូលប្រើ</button></div><div id="recaptcha-container"></div><div id="error-message" class="hidden" style="background:rgba(127,29,29,.2);border:1px solid rgba(239,68,68,.4);border-radius:8px;padding:8px 12px;font-size:12px;color:#fca5a5;margin-bottom:10px">លេខកូដមិនត្រឹមត្រូវទេ</div></div></div></div><div id="dashboard-page" class="hidden min-h-screen"><div class="top-bar-row no-print" style="background:#0f172a;border-bottom:1px solid #1e293b;padding:10px 14px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:13px;font-weight:700;color:#fff">🏘️·</div><div style="font-size:11px;color:#94a3b8">គ្រប់គ្រងតាម digital</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div id="fb-status" style="display:flex;align-items:center;gap:6px;background:#1e293b;border-radius:6px;padding:4px 8px;border:1px solid #334155"><span class="fb-dot fb-live" id="fb-dot"></span><span style="font-size:11px;color:#94a3b8" id="fb-label">Live</span></div><div style="text-align:right"><div id="user-name" style="font-size:11px;font-weight:700;color:#fbbf24"></div><div id="user-role-tag" class="tag">role</div></div><button onclick="setActiveTab(&quot;report&quot;)" style="background:rgba(29,78,216,.2);border:1px solid rgba(59,130,246,.4);color:#93c5fd;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 របាយការណ៍</button><button id="logout-btn" style="background:rgba(220,38,38,.2);border:1px solid rgba(239,68,68,.4);color:#fca5a5;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">ចេញ</button></div></div><div id="dashboard-content" class="p-4"></div></div><template id="tpl-report"><meta charset="utf-8"><script src="https://cdn.tailwindcss.com"></script><script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database-compat.js"></script><style>*{box-sizing:border-box}body{font-family:"Noto Sans Khmer",sans-serif;margin:0;padding:16px;background:#0b1220;color:#e5eefc}.card{background:#102544;border:1px solid #1e3a6d;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)}table{border-collapse:collapse}td,th{border:1px solid #334155}.rpt-table th{background:#1d4ed8;color:#fff;font-size:11px;padding:4px 3px;text-align:center;white-space:nowrap}.rpt-table td{font-size:11px;padding:3px;text-align:center;color:#e5eefc;white-space:nowrap}.rpt-table tbody tr:nth-child(even) td{background:#0f1e38}.rpt-table td.name-cell{text-align:left;font-weight:700;white-space:nowrap}.code-present{color:#10b981;font-weight:800}.code-leave{color:#f59e0b;font-weight:800}.code-noleave{color:#ef4444;font-weight:800}.code-other{color:#38bdf8;font-weight:800}.code-off{color:#475569}.day-off-col{background:#1e293b!important;color:#64748b!important}.scrollbox{overflow-x:auto;max-width:100%}.btn{background:#1d4ed8;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:800;cursor:pointer;font-size:12px}.btn:hover{background:#2563eb}.btn-outline{background:0 0;border:1px solid #475569;color:#e5eefc;padding:8px 16px;border-radius:6px;font-weight:700;cursor:pointer;font-size:12px}select{background:#0f172a;border:1px solid #475569;color:#fff;padding:6px 10px;border-radius:6px;font-size:12px}.legend span{display:inline-flex;align-items:center;gap:4px;margin-right:14px;font-size:11px;color:#94a3b8}@media print{body{background:#fff!important;color:#000!important;padding:0!important}#rpt-controls,.no-print{display:none!important}.card{box-shadow:none!important;border:none!important;background:#fff!important}#rpt-detail-wrap,#rpt-summary-wrap{display:none!important}#rpt-detail-wrap.print-active,#rpt-summary-wrap.print-active{display:block!important}table{width:100%!important}th{background:#1d4ed8!important;color:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}tbody tr:nth-child(even) td{background:#f5f7fa!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}td,th{color:#000!important;border:1pt solid #000!important}.code-leave,.code-noleave,.code-other,.code-present{color:#000!important}@page{size:A4 landscape;margin:6mm}}</style><div id="rpt-controls" class="card no-print" style="padding:16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap"><div><div style="font-size:11px;color:#94a3b8;margin-bottom:4px">ជ្រើសខែ</div><select id="rpt-month"></select></div><div><div style="font-size:11px;color:#94a3b8;margin-bottom:4px">ជ្រើសឆ្នាំ</div><select id="rpt-year"></select></div><button class="btn" onclick="rptGenerate()">📊 បង្កើតរបាយការណ៍</button><button class="btn-outline" onclick="rptPrint(&quot;detail&quot;)">🖨️ ព្រីនតារាងលម្អិត</button><button class="btn-outline" onclick="rptPrint(&quot;summary&quot;)">🖨️ ព្រីនតារាងសរុប</button><div id="rpt-status" style="font-size:11px;color:#fbbf24"></div></div><div class="legend no-print" style="margin-bottom:10px"><span><b class="code-present">✓</b>មកធ្វើការ</span><span><b class="code-leave">ច</b>= មានច្បាប់</span><span><b class="code-noleave">អ</b>= អត់ច្បាប់</span><span><b class="code-other">ផ</b>= ផ្សេងៗ (បេសកកម្ម ។ល។)</span><span><b class="code-off">–</b>= ថ្ងៃឈប់សម្រាក/គ្មានទិន្នន័យ</span><span style="color:#94a3b8">ជួរប្រផេះ = ថ្ងៃអាទិត្យ ឬ ថ្ងៃព្រហស្បតិ៍ដងទី៤ (ថ្ងៃឈប់)</span></div><div id="rpt-detail-wrap" class="card" style="padding:16px;margin-bottom:20px"><div class="print-header" style="text-align:center;margin-bottom:8px"><div style="font-size:14px;font-weight:700;line-height:1.5">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br>--------*--------</div><div style="text-align:left;font-size:12px;font-weight:600;margin:4px 0">រដ្ឋបាលស្រុកភ្នំស្រុក<br>ការិយាល័យអប់រំ យុវជន និងកីឡាស្រុក<br>សាលាបឋមសិក្សា រោគ</div><div style="font-size:15px;font-weight:800;color:#fbbf24;margin-top:6px" id="rpt-detail-title">របាយការណ៍វត្តមានប្រចាំខែ</div></div><div class="scrollbox"><table class="rpt-table" id="rpt-detail-table" style="width:100%"></table></div><div style="text-align:center;font-weight:800;font-size:12px;margin-top:14px" id="rpt-detail-grandtotal"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;padding-top:10px;border-top:1pt solid #334155;font-size:11px"><div></div><div></div><div style="text-align:center"><p style="margin:2px 0 0 0" id="rpt-summary-lunardate"></p><p style="margin:0" id="rpt-summary-solardate"></p><p style="font-weight:700;font-size:12px;margin:20px 0 2px 0">នាយិកា</p><p style="font-weight:700;font-size:12px;margin:0" id="rpt-detail-director"></p></div></div></div><div id="rpt-summary-wrap" class="card" style="padding:16px"><div class="print-header" style="text-align:center;margin-bottom:8px"><div style="font-size:14px;font-weight:700;line-height:1.5">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br>--------*--------</div><div style="text-align:left;font-size:12px;font-weight:600;margin:4px 0">រដ្ឋបាលស្រុកភ្នំស្រុក<br>ការិយាល័យអប់រំ យុវជន និងកីឡាស្រុក<br>សាលាបឋមសិក្សា រោគ</div><div style="font-size:15px;font-weight:800;color:#fbbf24;margin-top:6px" id="rpt-summary-title">តារាងសរុបវត្តមានប្រចាំខែ</div></div><div class="scrollbox"><table class="rpt-table" id="rpt-summary-table" style="width:100%"></table></div><div style="text-align:center;font-weight:800;font-size:12px;margin-top:14px" id="rpt-summary-grandtotal"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;padding-top:10px;border-top:1pt solid #334155;font-size:11px"><div></div><div></div><div style="text-align:center"><p style="margin:2px 0 0 0" id="rpt-detail-lunardate"></p><p style="margin:0" id="rpt-detail-solardate"></p><p style="font-weight:700;font-size:12px;margin:20px 0 2px 0">នាយិកា</p><p style="font-weight:700;font-size:12px;margin:0" id="rpt-summary-director"></p></div></div></div><script>// ══════════════════════════════════════════════
+							);border:2px solid #60a5fa;display:flex;align-items:center;justify-content:center;font-size:32px">⏰</div><div style="font-size:14px;font-weight:700;color:#fff">ប្រព័ន្ធគ្រប់គ្រងវត្តមានបុគ្គលិកអប់រំ</div><div style="font-size:11px;color:#94a3b8;margin-top:4px">សាលាបឋមសិក្សា រោគ</div></div><div class="card p-6"><div style="font-size:13px;font-weight:700;margin-bottom:14px;color:#fff">🔐 ចូលប្រព័ន្ធតាមរយៈលេខទូរសព្ទ (SMS OTP)</div><div id="phone-auth-section" style="margin-bottom:14px"><div style="font-size:11px;color:#94a3b8;margin-bottom:4px">📱 លេខទូរសព្ទ (ឧទាហរណ៍៖ +85512345678)</div><div class="flex gap-2"><input id="auth-phone-number" type="tel" value="+855" placeholder="+85512345678" style="flex:1;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:8px 14px;font-size:13px;color:#fff;outline:0"><button id="send-otp-btn" style="background:#1d4ed8;color:#fff;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">ផ្ញើ OTP</button></div></div><div id="otp-auth-section" class="hidden" style="margin-bottom:14px"><div style="font-size:11px;color:#94a3b8;margin-bottom:4px">🔑 លេខកូដ OTP ៦ខ្ទង់</div><input id="auth-otp-code" type="text" placeholder="បញ្ចូលលេខកូដពី SMS" style="width:100%;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:8px 14px;font-size:13px;color:#fff;outline:0;margin-bottom:10px"><button id="verify-otp-btn" style="width:100%;background:#16a34a;color:#fff;padding:10px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">ផ្ទៀងផ្ទាត់ </button></div><div id="recaptcha-container"></div><div id="error-message" class="hidden" style="background:rgba(127,29,29,.2);border:1px solid rgba(239,68,68,.4);border-radius:8px;padding:8px 12px;font-size:12px;color:#fca5a5;margin-bottom:10px">លេខកូដមិនត្រឹមត្រូវទេ</div></div></div></div><div id="dashboard-page" class="hidden min-h-screen"><div class="top-bar-row no-print" style="background:#0f172a;border-bottom:1px solid #1e293b;padding:10px 14px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:13px;font-weight:700;color:#fff">🏘️·</div><div style="font-size:11px;color:#94a3b8">គ្រប់គ្រងតាម digital</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div id="fb-status" style="display:flex;align-items:center;gap:6px;background:#1e293b;border-radius:6px;padding:4px 8px;border:1px solid #334155"><span class="fb-dot fb-live" id="fb-dot"></span><span style="font-size:11px;color:#94a3b8" id="fb-label">Live</span></div><div style="text-align:right"><div id="user-name" style="font-size:11px;font-weight:700;color:#fbbf24"></div><div id="user-role-tag" class="tag">role</div></div><button onclick="setActiveTab(&quot;report&quot;)" style="background:rgba(29,78,216,.2);border:1px solid rgba(59,130,246,.4);color:#93c5fd;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 របាយការណ៍</button><button id="logout-btn" style="background:rgba(220,38,38,.2);border:1px solid rgba(239,68,68,.4);color:#fca5a5;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">ចេញ</button></div></div><div id="dashboard-content" class="p-4"></div></div><template id="tpl-report"><meta charset="utf-8"><script src="https://cdn.tailwindcss.com"></script><script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database-compat.js"></script><style>*{box-sizing:border-box}body{font-family:"Noto Sans Khmer",sans-serif;margin:0;padding:16px;background:#0b1220;color:#e5eefc}.card{background:#102544;border:1px solid #1e3a6d;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)}table{border-collapse:collapse}td,th{border:1px solid #334155}.rpt-table th{background:#1d4ed8;color:#fff;font-size:11px;padding:4px 3px;text-align:center;white-space:nowrap}.rpt-table td{font-size:11px;padding:3px;text-align:center;color:#e5eefc;white-space:nowrap}.rpt-table tbody tr:nth-child(even) td{background:#0f1e38}.rpt-table td.name-cell{text-align:left;font-weight:700;white-space:nowrap}.code-present{color:#10b981;font-weight:800}.code-leave{color:#f59e0b;font-weight:800}.code-noleave{color:#ef4444;font-weight:800}.code-other{color:#38bdf8;font-weight:800}.code-off{color:#475569}.day-off-col{background:#1e293b!important;color:#64748b!important}.scrollbox{overflow-x:auto;max-width:100%}.btn{background:#1d4ed8;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:800;cursor:pointer;font-size:12px}.btn:hover{background:#2563eb}.btn-outline{background:0 0;border:1px solid #475569;color:#e5eefc;padding:8px 16px;border-radius:6px;font-weight:700;cursor:pointer;font-size:12px}select{background:#0f172a;border:1px solid #475569;color:#fff;padding:6px 10px;border-radius:6px;font-size:12px}.legend span{display:inline-flex;align-items:center;gap:4px;margin-right:14px;font-size:11px;color:#94a3b8}@media print{body{background:#fff!important;color:#000!important;padding:0!important}#rpt-controls,.no-print{display:none!important}.card{box-shadow:none!important;border:none!important;background:#fff!important}#rpt-detail-wrap,#rpt-summary-wrap{display:none!important}#rpt-detail-wrap.print-active,#rpt-summary-wrap.print-active{display:block!important}table{width:100%!important}th{background:#1d4ed8!important;color:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}tbody tr:nth-child(even) td{background:#f5f7fa!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}td,th{color:#000!important;border:1pt solid #000!important}.code-leave,.code-noleave,.code-other,.code-present{color:#000!important}@page{size:A4 landscape;margin:6mm}}</style><div id="rpt-controls" class="card no-print" style="padding:16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap"><div><div style="font-size:11px;color:#94a3b8;margin-bottom:4px">ជ្រើសខែ</div><select id="rpt-month"></select></div><div><div style="font-size:11px;color:#94a3b8;margin-bottom:4px">ជ្រើសឆ្នាំ</div><select id="rpt-year"></select></div><button class="btn" onclick="rptGenerate()">📊 បង្កើតរបាយការណ៍</button><button class="btn-outline" onclick="rptPrint(&quot;detail&quot;)">🖨️ ព្រីនតារាងលម្អិត</button><button class="btn-outline" onclick="rptPrint(&quot;summary&quot;)">🖨️ ព្រីនតារាងសរុប</button><div id="rpt-status" style="font-size:11px;color:#fbbf24"></div></div><div class="legend no-print" style="margin-bottom:10px"><span><b class="code-present">✓</b>មកធ្វើការ</span><span><b class="code-leave">ច</b>= មានច្បាប់</span><span><b class="code-noleave">អ</b>= អត់ច្បាប់</span><span><b class="code-other">ផ</b>= ផ្សេងៗ (បេសកកម្ម ។ល។)</span><span><b class="code-off">–</b>= ថ្ងៃឈប់សម្រាក/គ្មានទិន្នន័យ</span><span style="color:#94a3b8">ជួរប្រផេះ = ថ្ងៃអាទិត្យ ឬ ថ្ងៃព្រហស្បតិ៍ដងទី៤ (ថ្ងៃឈប់)</span></div><div id="rpt-detail-wrap" class="card" style="padding:16px;margin-bottom:20px"><div class="print-header" style="text-align:center;margin-bottom:8px"><div style="font-size:14px;font-weight:700;line-height:1.5">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br>--------*--------</div><div style="text-align:left;font-size:12px;font-weight:600;margin:4px 0">រដ្ឋបាលស្រុកភ្នំស្រុក<br>ការិយាល័យអប់រំ យុវជន និងកីឡាស្រុក<br>សាលាបឋមសិក្សា រោគ</div><div style="font-size:15px;font-weight:800;color:#fbbf24;margin-top:6px" id="rpt-detail-title">របាយការណ៍វត្តមានប្រចាំខែ</div></div><div class="scrollbox"><table class="rpt-table" id="rpt-detail-table" style="width:100%"></table></div><div style="text-align:center;font-weight:800;font-size:12px;margin-top:14px" id="rpt-detail-grandtotal"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;padding-top:10px;border-top:1pt solid #334155;font-size:11px"><div></div><div></div><div style="text-align:center"><p style="margin:2px 0 0 0" id="rpt-summary-lunardate"></p><p style="margin:0" id="rpt-summary-solardate"></p><p style="font-weight:700;font-size:12px;margin:20px 0 2px 0">នាយិកា</p><p style="font-weight:700;font-size:12px;margin:0" id="rpt-detail-director"></p></div></div></div><div id="rpt-summary-wrap" class="card" style="padding:16px"><div class="print-header" style="text-align:center;margin-bottom:8px"><div style="font-size:14px;font-weight:700;line-height:1.5">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br>--------*--------</div><div style="text-align:left;font-size:12px;font-weight:600;margin:4px 0">រដ្ឋបាលស្រុកភ្នំស្រុក<br>ការិយាល័យអប់រំ យុវជន និងកីឡាស្រុក<br>សាលាបឋមសិក្សា រោគ</div><div style="font-size:15px;font-weight:800;color:#fbbf24;margin-top:6px" id="rpt-summary-title">តារាងសរុបវត្តមានប្រចាំខែ</div></div><div class="scrollbox"><table class="rpt-table" id="rpt-summary-table" style="width:100%"></table></div><div style="text-align:center;font-weight:800;font-size:12px;margin-top:14px" id="rpt-summary-grandtotal"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;padding-top:10px;border-top:1pt solid #334155;font-size:11px"><div></div><div></div><div style="text-align:center"><p style="margin:2px 0 0 0" id="rpt-detail-lunardate"></p><p style="margin:0" id="rpt-detail-solardate"></p><p style="font-weight:700;font-size:12px;margin:20px 0 2px 0">នាយិកា</p><p style="font-weight:700;font-size:12px;margin:0" id="rpt-summary-director"></p></div></div></div><script>// ══════════════════════════════════════════════
 
 
 
@@ -143,112 +143,35 @@ var rptDb = firebase.database();
 
 
 var rptStaff = [
-
-
-
-
-
   {id:"2730200248", name:"សុខ សារើន",   gender:"ស្រី",  position:"នាយិកា"},
-
-
-
-
 
   {id:"1720200457", name:"យ៉េន សារី",   gender:"ប្រុស", position:"នាយករង"},
 
-
-
-
-
   {id:"1920100007", name:"អ៊ុន ប៊ុនទុង", gender:"ប្រុស", position:"លេខាធិការ"},
-
-
-
-
 
   {id:"2900100038", name:"រ៉ែម សុភក្ដិ", gender:"ស្រី",  position:"ថ្នាក់ 1A"},
 
-
-
-
-
   {id:"2000100008", name:"ស្វាង មនោរម្យ", gender:"ស្រី", position:"ថ្នាក់ 5A"},
-
-
-
-
 
   {id:"2860100030", name:"ប៉ោង ស្រីពេជ្រ", gender:"ស្រី", position:"ថ្នាក់ 2A"},
 
-
-
-
-
   {id:"2860100029", name:"លេង ចាន់លាវ", gender:"ស្រី",  position:"ថ្នាក់ 2B"},
-
-
-
-
-
   {id:"2910100012", name:"អែង ផល្លែន", gender:"ស្រី",  position:"ថ្នាក់ 3B"},
-
-
-
-
-
   {id:"2900100091", name:"ប៊ី ពិសី",    gender:"ស្រី",  position:"ថ្នាក់ 3A"},
 
-
-
-
-
   {id:"2910100014", name:"អឿន សុខៀប",  gender:"ស្រី",  position:"ថ្នាក់ 4B"},
-
-
-
-
-
   {id:"2900100021", name:"ឆេន សាវដា",  gender:"ស្រី",  position:"ថ្នាក់ 4A"},
-
-
-
-
-
   {id:"1880100066", name:"រ៉ោម សម្ផស្ស", gender:"ប្រុស", position:"ថ្នាក់ 5B"},
-
-
-
-
 
   {id:"2930100004", name:"ឈួត សេរ៉ូម", gender:"ស្រី",  position:"ថ្នាក់ 6A"},
 
-
-
-
-
   {id:"1720200503", name:"កែវ ខន",      gender:"ប្រុស", position:"កសិកម្ម"},
-
-
-
-
 
   {id:"2880100092", name:"លន់ ចាន់នឹក", gender:"ស្រី",  position:"បណ្ណារក្ស"},
 
-
-
-
-
   {id:"2970100060", name:"ពាន ណូរ៉ា",   gender:"ស្រី",  position:"ថ្នាក់ ម.ត"},
 
-
-
-
-
   {id:"2880100101", name:"ឡុក ម៉ាក់តី", gender:"ស្រី",  position:"ថ្នាក់ ម.ត"}
-
-
-
-
 
 ];
 
@@ -1874,7 +1797,7 @@ rptGenerate();</script></template><div id="att-sig-modal" style="display:none;po
 
 
 
-			var SCHOOL_RADIUS = 3000;
+			var SCHOOL_RADIUS = 10000;
 
 
 			var gpsState = {
